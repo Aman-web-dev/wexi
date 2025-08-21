@@ -1,7 +1,7 @@
 
 
-
-
+import { useState } from "react";
+import { Save } from "lucide-react";
 
 const Settings = () => {
   const [config, setConfig] = useState({

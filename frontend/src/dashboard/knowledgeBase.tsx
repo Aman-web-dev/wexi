@@ -1,4 +1,4 @@
-const KnowledgeBase = () => {
+const kb = () => {
   const [articles, setArticles] = useState(mockKBArticles);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
@@ -139,6 +139,13 @@ const KnowledgeBase = () => {
     </div>
   );
 };
+
+
+const KnowledgeBase = ()=>{
+  return (
+<h1>Gello</h1>
+  )
+}
 
 
 export default KnowledgeBase;

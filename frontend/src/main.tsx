@@ -9,6 +9,8 @@ import Settings from "./dashboard/settings";
 import TicketDetail from "./dashboard/ticketPage";
 import AuthPage from "./auth/signup.tsx";
 import { AuthProvider } from "./context/authContext.tsx";
+import ProtectedRoute from "./componets/protectedRoute.tsx";
+import Dashboard from "./dashboard/dashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,29 +20,18 @@ const router = createBrowserRouter([
   {
     path: "auth",
     Component: AuthPage,
-    children: [
-      {
-        path: ":type",
-        Component: AuthPage,
-        loader: ({ params }) => {
-          return { type: params.type };
-        },
-      },
-    ],
   },
   {
     path: "dashboard",
-    Component: TicketDetail,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, Component: TicketDetail },
-      {
-        path: "knowledgeBase",
-        Component: KnowledgeBase,
-      },
-      {
-        path: "settings",
-        Component: Settings,
-      }
+      { path: "knowledgebase", Component: KnowledgeBase }, 
+      { path: "settings", Component: Settings }, 
     ],
   },
 ]);

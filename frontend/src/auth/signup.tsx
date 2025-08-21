@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
 import { Bot, RefreshCw, EyeOff, Eye } from "lucide-react";
-import { redirect } from "react-router";
 import axios from "axios";
+import { Navigate } from "react-router";
 
 const AuthPage = () => {
   const [formData, setFormData] = useState({
@@ -16,15 +16,20 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
+  const {login,isAuthenticated,user} = useAuth();
+
+
+    if (isAuthenticated && user) {
+      console.log("User is authenticated", user);
+      window.location.href = "/dashboard";
+    } 
+
 
   const handleTypeSwitch = () => {
     if (type === "login") {
       setType("register");
-      // setFormData({ name: '', email: '', password: '', role: 'user' });
     } else {
       setType("login");
-      // setFormData({ name: '', email: '', password: '', role: 'user' });
     }
   };
 
@@ -42,7 +47,10 @@ const AuthPage = () => {
           setError("Invalid credentials");
         }
       } else {
-        const res = await axios.post("http://localhost:6000/api/v1/auth/signup", formData);
+        const res = await axios.post(
+          "http://localhost:9000/api/v1/auth/signup",
+          formData
+        );
         if (res.status === 201) {
           setType("login");
           setFormData({ name: "", email: "", password: "", role: "user" });
@@ -66,9 +74,7 @@ const AuthPage = () => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">
-              Wexi
-            </span>
+            <span className="text-xl font-bold text-gray-900">Wexi</span>
           </div>
           <h2 className="text-2xl font-bold text-gray-900">
             {type === "login" ? "Welcome back" : "Create your account"}

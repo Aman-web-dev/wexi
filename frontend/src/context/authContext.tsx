@@ -49,18 +49,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     Cookies.remove('token');
   };
 
+
+
   // Check cookies for user and token on mount
   useEffect(() => {
-    const userCookie = Cookies.get('user');
-    const token = Cookies.get('token');
+    const allCookies= Cookies.get()
+    console.log("Running use Effect in use Auth")
+    const userCookie = allCookies.user;
+    const token = allCookies.token;
+    console.log(userCookie,token,allCookies)
     if (userCookie && token) {
       try {
         const parsedUser = JSON.parse(userCookie);
         const payload = JSON.parse(atob(token.split('.')[1]));
+        console.log(payload)
         const now = Math.floor(Date.now() / 1000);
         if (payload.exp && payload.exp > now) {
           setUser(parsedUser);
           setIsAuthenticated(true);
+          console.log(parsedUser, true,"Current User in AuthProvider");
         } else {
           logout();
         }
@@ -80,8 +87,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { user: JSON.parse(userCookie), token };
     }
     try {
-      const res = await axios.post('/api/login', { email, password });
-      const { user: userData, token: jwt } = res.data;
+      const res = await axios.post('http://localhost:9000/api/v1/auth/login', { email, password });
+      const {user: userData} =res.data.data;
+      const {token: jwt } = res.data;
       Cookies.set('user', JSON.stringify(userData));
       Cookies.set('token', jwt);
       setUser(userData);
@@ -103,10 +111,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// ...existing code...
+
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
+
