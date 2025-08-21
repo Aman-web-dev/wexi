@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import knowledgeBase from "../models/knowledgeBase";
+import KnowledgeBase from "../models/knowledgeBase.js";
 
 
 export const getAllKnowledgeBase = async (req, res) => {
   try {
-    const kbs = await knowledgeBase.find({creatorAdminId:req.user._id});
+    const kbs = await KnowledgeBase.find({creatorAdminId:req.user._id});
     res.status(200).json({
       status: 'success',
       data: kbs
@@ -22,7 +22,7 @@ export const getAllKnowledgeBase = async (req, res) => {
 export const getKnowledgeBaseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const kb = await knowledgeBase.findById(id);
+    const kb = await KnowledgeBase.findById(id);
     if (!kb) {
       return res.status(404).json({
         status: 'fail',
@@ -45,7 +45,7 @@ export const getKnowledgeBaseById = async (req, res) => {
 export const deleteKnowledgeBase = async (req, res) => {
   try {
     const { id } = req.params;
-    const kb = await knowledgeBase.findByIdAndDelete(id);
+    const kb = await KnowledgeBase.findByIdAndDelete(id);
     if (!kb) {
       return res.status(404).json({
         status: 'fail',
@@ -76,7 +76,7 @@ export const createKnowledgeBase = async (req, res) => {
       });
     }
 
-    const newKnowledgeBase = new knowledgeBase({
+    const newKnowledgeBase = new KnowledgeBase({
       title,
       body,
       tags,
@@ -88,7 +88,7 @@ export const createKnowledgeBase = async (req, res) => {
     res.status(201).json({
       status: 'success',
       data: {
-        knowledgeBase: newKnowledgeBase
+        KnowledgeBase: newKnowledgeBase
       }
     });
   } catch (err) {
@@ -112,17 +112,17 @@ export const updateKnowledgeBase = async (req, res) => {
       });
     }
 
-    const existingKnowledgeBase = await knowledgeBase.findById({_id:knowledgeBaseId, creatorAdminId: req.user._id });
+    const existingKnowledgeBase = await KnowledgeBase.findById({_id:knowledgeBaseId, creatorAdminId: req.user._id });
 
 
     if (!existingKnowledgeBase) {
       return  res.status(400).json({
         status:'notfound',
-        message:'knowledgeBase does not exist Please check knowledgeBaseID'
+        message:'KnowledgeBase does not exist Please check knowledgeBaseID'
       })
      }
 
-    const updatedKnowledgeBase = await knowledgeBase.findOneAndUpdate(
+    const updatedKnowledgeBase = await KnowledgeBase.findOneAndUpdate(
       { _id: knowledgeBaseId, creatorAdminId: req.user._id },
       { title, body, tags },
       { new: true }
@@ -138,14 +138,14 @@ export const updateKnowledgeBase = async (req, res) => {
     res.status(200).json({
       status: 'success',
       data: {
-      knowledgeBase: updatedKnowledgeBase
+      KnowledgeBase: updatedKnowledgeBase
       }
     });
 
     res.status(201).json({
       status: 'success',
       data: {
-        knowledgeBase: newKnowledgeBase
+        KnowledgeBase: newKnowledgeBase
       }
     });
   } catch (err) {
