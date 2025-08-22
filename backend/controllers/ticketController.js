@@ -1,5 +1,8 @@
 import Ticket from "../models/ticketModel.js";
 import mongoose from "mongoose";
+import agentSuggestion from "../models/agentSuggestion.js";
+import ticketReplies from "../models/ticketReplies.js";
+
 
 // POST /api/tickets (user)
 export const createTicket = async (req, res) => {
@@ -45,6 +48,31 @@ export const getTickets = async (req, res) => {
   }
 };
 
+
+export const updateTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {category, status, assigneeId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ status: 'fail', message: 'Invalid tickeID' });
+    }
+    const ticket = await Ticket.findById(id);
+    if (!ticket) {  
+      return res.status(404).json({ status: 'fail', message: 'Ticket not found' });
+    }
+    if (category) ticket.category = category;
+    if (status) ticket.status = status;   
+    if(assigneeId) ticket.assignee = assigneeId;    
+    ticket.updatedAt = Date.now();
+    await ticket.save();
+    res.status(200).json({ status: 'success', data: ticket });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+
 // GET /api/tickets/:id
 export const getTicketById = async (req, res) => {
   try {
@@ -54,7 +82,10 @@ export const getTicketById = async (req, res) => {
         .status(400)
         .json({ status: "fail", message: "Invalid ticket ID" });
     }
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findById(id).populate({
+      path:'replies',
+      populate: { path: 'createdBy', model: 'User'} 
+    });
     if (!ticket) {
       return res
         .status(404)
@@ -70,8 +101,8 @@ export const getTicketById = async (req, res) => {
 export const replyToTicket = async (req, res) => {
   try {
     const { id } = req.params;
-    const { reply, status } = req.body;
-    if (!reply || !status) {
+    const { reply } = req.body;
+    if (!reply) {
       return res
         .status(400)
         .json({ status: "fail", message: "Reply and new status required" });
@@ -82,8 +113,17 @@ export const replyToTicket = async (req, res) => {
         .status(404)
         .json({ status: "fail", message: "Ticket not found" });
     }
+
+    const newReply = new ticketReplies({
+      ticketId: ticket._id,
+      reply,
+      createdBy: req.user._id,
+    });
+
+    newReply.save();
+    ticket.replies.push(newReply._id);
+
     // Optionally, store replies in a separate collection or array. Here, just update status.
-    ticket.status = status;
     ticket.updatedAt = Date.now();
     await ticket.save();
     res

@@ -13,12 +13,10 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
-    { value: 'general', label: 'General Support' },
-    { value: 'technical', label: 'Technical Issue' },
-    { value: 'billing', label: 'Billing' },
-    { value: 'feature-request', label: 'Feature Request' },
-    { value: 'bug-report', label: 'Bug Report' },
-    { value: 'other', label: 'Other' }
+    { value: "shipping", label: "Shipping" },
+    { value: "tech", label: "Technical Issue" },
+    { value: "billing", label: "Billing" },
+    { value: "other", label: "Other" },
   ];
 
   const handleSubmit = async (e) => {

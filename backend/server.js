@@ -6,6 +6,7 @@ import AuthRoutes from "./routes/authRoutes.js";
 import KnowledgeBaseRoutes from "./routes/knowledgeBaseRoutes.js";
 import mongoose from "mongoose";
 import TicketRoutes from "./routes/ticketRoutes.js";
+import configRoutes from "./routes/configRoute.js";
 dotenv.config();
 
 const url = process.env.MONGO_DB_URI;
@@ -14,10 +15,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/knowledgebase", KnowledgeBaseRoutes);
 app.use("/api/v1/tickets", TicketRoutes);
+app.use("/api/v1/config", configRoutes);
 
 async function server() {
   console.log(port, url);

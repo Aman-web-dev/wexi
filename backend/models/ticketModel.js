@@ -16,6 +16,7 @@ const ticketSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   assignee: { type: Schema.Types.ObjectId, ref: 'User' },
   agentSuggestionId: { type: Schema.Types.ObjectId, ref: 'AgentSuggestion' },
+  replies: [{ type: Schema.Types.ObjectId, ref: 'TicketReplies' }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

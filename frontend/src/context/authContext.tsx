@@ -1,22 +1,15 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-
-type User = {
-  name: string;
-  email: string;
-  token: string;
-  role: string;
-};
+import type { User } from "../types";
 
 const defaultUser = {
+  _id:"",
   name: "",
   email: "",
   token: "",
-  role: "",
+  role: "user",
 };
-
-
 
 type AuthContextType = {
   user: User;
@@ -30,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User>(defaultUser);
+  const [user, setUser] = useState<User>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Logout function

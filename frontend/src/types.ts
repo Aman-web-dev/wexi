@@ -9,15 +9,15 @@ export type Ticket = {
   agentSuggestionId?: string; 
   createdAt: string;
   updatedAt: string;
+  replies:any[];
 };
 
 export type User = {
-  _id: string;
+  id: string;
   name: string;
   email: string;
-  password: string;
   role: 'admin' | 'agent' | 'user';
-  createdAt: string; 
+  token:string;
 }
 
 export type Article = {
