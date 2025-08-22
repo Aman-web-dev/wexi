@@ -2,9 +2,14 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
 import { Bot, RefreshCw, EyeOff, Eye } from "lucide-react";
 import axios from "axios";
-import { Navigate } from "react-router";
+import { useNavigate } from "react-router";
+
+
+
+
 
 const AuthPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,14 +21,14 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const {login,isAuthenticated,user} = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
 
-
+  useEffect(() => {
     if (isAuthenticated && user) {
       console.log("User is authenticated", user);
-      window.location.href = "/dashboard";
-    } 
-
+      navigate("/dashboard");
+    }
+  });
 
   const handleTypeSwitch = () => {
     if (type === "login") {
@@ -41,14 +46,9 @@ const AuthPage = () => {
     try {
       if (type === "login") {
         const success = await login(formData.email, formData.password);
-        if (success) {
-          redirect("/dashboard");
-        } else {
-          setError("Invalid credentials");
-        }
       } else {
         const res = await axios.post(
-          "http://localhost:9000/api/v1/auth/signup",
+          "http://localhost:9000/api/v1/auth/register",
           formData
         );
         if (res.status === 201) {

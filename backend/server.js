@@ -3,8 +3,9 @@ import cors from "cors";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import AuthRoutes from "./routes/authRoutes.js";
-import KnowledgeBaseRouter from './routes/knowledgeBaseRoutes.js';
+import KnowledgeBaseRoutes from "./routes/knowledgeBaseRoutes.js";
 import mongoose from "mongoose";
+import TicketRoutes from "./routes/ticketRoutes.js";
 dotenv.config();
 
 const url = process.env.MONGO_DB_URI;
@@ -15,7 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/v1/auth", AuthRoutes);
-app.use("/api/v1/auth", KnowledgeBaseRouter);
+app.use("/api/v1/knowledgebase", KnowledgeBaseRoutes);
+app.use("/api/v1/tickets", TicketRoutes);
 
 async function server() {
   console.log(port, url);

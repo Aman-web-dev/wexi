@@ -4,7 +4,7 @@ import KnowledgeBase from "../models/knowledgeBase.js";
 
 export const getAllKnowledgeBase = async (req, res) => {
   try {
-    const kbs = await KnowledgeBase.find({creatorAdminId:req.user._id});
+    const kbs = await KnowledgeBase.find();
     res.status(200).json({
       status: 'success',
       data: kbs
@@ -67,12 +67,12 @@ export const deleteKnowledgeBase = async (req, res) => {
 
 export const createKnowledgeBase = async (req, res) => {
   try {
-    const { title, body, tags } = req.body;
-
-    if (!title || !body || !tags.length > 0 || !req.user || !req.user._id) {
+    const { title, body, tags,status } = req.body;
+console.log(title, body, tags )
+    if (!title || !body || !tags.length > 0 ) {
       return res.status(400).json({
         status: 'fail',
-        message: 'Title, content, tags and adminId are required'
+        message: 'Title, body, tags and adminId are required'
       });
     }
 
@@ -80,7 +80,7 @@ export const createKnowledgeBase = async (req, res) => {
       title,
       body,
       tags,
-      creatorAdminId: req.user._id
+      status
     });
 
     await newKnowledgeBase.save();
@@ -103,16 +103,17 @@ export const createKnowledgeBase = async (req, res) => {
 
 export const updateKnowledgeBase = async (req, res) => {
   try {
-    const { knowledgeBaseId, title, body, tags } = req.body;
+    const { id: knowledgeBaseId } = req.params;
+    const {  title, body, tags ,status } = req.body;
 
-    if (!title || !body || !tags.length > 0 || !req.user || !req.user._id || !knowledgeBaseId) {
+    if (!title || !body || !tags.length > 0 || !req.user) {
       return res.status(400).json({
         status: 'fail',
         message: 'Title, content, tags and adminId are required'
       });
     }
 
-    const existingKnowledgeBase = await KnowledgeBase.findById({_id:knowledgeBaseId, creatorAdminId: req.user._id });
+    const existingKnowledgeBase = await KnowledgeBase.findById({_id:knowledgeBaseId});
 
 
     if (!existingKnowledgeBase) {
@@ -123,8 +124,8 @@ export const updateKnowledgeBase = async (req, res) => {
      }
 
     const updatedKnowledgeBase = await KnowledgeBase.findOneAndUpdate(
-      { _id: knowledgeBaseId, creatorAdminId: req.user._id },
-      { title, body, tags },
+      { _id: knowledgeBaseId },
+      { title, body, tags ,status},
       { new: true }
     );
 

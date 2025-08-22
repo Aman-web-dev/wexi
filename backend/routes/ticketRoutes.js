@@ -1,23 +1,21 @@
 import express from 'express';
 
-import { assignTicket,replyToTicket,getTicketById,getTickets,createTicket } from '../controllers/ticketController';
-import { auth } from '../middleware/authMiddleware';
+import { assignTicket,replyToTicket,getTicketById,getTickets,createTicket } from '../controllers/ticketController.js';
+import { auth } from '../middleware/authMiddleware.js';
 
-const TicketRouter = express.Router();
-
-
-TicketRouter.use(auth);
+const TicketRoutes = express.Router();
 
 
-TicketRouter.post("/", createTicket);
-TicketRouter.get("/", getTickets);  
-TicketRouter.get("/:id", getTicketById);
-TicketRouter.post("/:id/reply", replyToTicket);
-TicketRouter.post("/:id/assign", assignTicket);
-
-
-TicketRouter.use("/tickets",createTicket);
+TicketRoutes.use(auth);
+TicketRoutes.post("/", createTicket);
+TicketRoutes.get("/", getTickets); 
+TicketRoutes.get("/:id", getTicketById);
+TicketRoutes.post("/:id/reply", replyToTicket);
+TicketRoutes.post("/:id/assign", assignTicket);
 
 
 
-export default TicketRouter;
+
+
+
+export default TicketRoutes;

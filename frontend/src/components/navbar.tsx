@@ -10,14 +10,16 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "../context/authContext.tsx";
+import { useNavigate } from "react-router";
 
 const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { logout, user } = useAuth();
+  const navigator= useNavigate();
 
   const menuItems = [
     {
-      id: "dashboard",
+      id: "",
       label: "Dashboard",
       icon: Home,
       roles: ["admin", "agent", "user"],
@@ -29,7 +31,7 @@ const Navigation = () => {
       roles: ["admin", "agent", "user"],
     },
     {
-      id: "kb",
+      id: "knowledgebase",
       label: "Knowledge Base",
       icon: BookOpen,
       roles: ["admin", "agent"],
@@ -61,7 +63,7 @@ const Navigation = () => {
                 return (
                   <button
                     key={item.id}
-                    // onClick={() => onNavigate(item.id)}
+                    onClick={()=>navigator(`/dashboard/${item.id}`)}
                     className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors
                     `}
                   >

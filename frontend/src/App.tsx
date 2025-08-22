@@ -2,9 +2,6 @@ import { ArrowRight,Bot,Zap,UserPlus,BookOpen,LogIn } from 'lucide-react'
 import './App.css'
 
 function App() {
-
-
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}

@@ -7,10 +7,11 @@ import { RouterProvider } from "react-router/dom";
 import KnowledgeBase from "./dashboard/knowledgeBase";
 import Settings from "./dashboard/settings";
 import TicketDetail from "./dashboard/ticketPage";
-import AuthPage from "./auth/signup.tsx";
+import AuthPage from "./auth/auth.tsx";
 import { AuthProvider } from "./context/authContext.tsx";
-import ProtectedRoute from "./componets/protectedRoute.tsx";
-import Dashboard from "./dashboard/dashboard.tsx";
+import ProtectedRoute from "./components/protectedRoute.tsx";
+import Dashboard from "./dashboard/dashboardLayout.tsx";
+import Stats from "./dashboard/stats.tsx";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +30,8 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, Component: TicketDetail },
+      { index: true, Component:Stats },
+      { path: "tickets", Component:TicketDetail }, 
       { path: "knowledgebase", Component: KnowledgeBase }, 
       { path: "settings", Component: Settings }, 
     ],
