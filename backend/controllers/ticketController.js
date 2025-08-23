@@ -2,7 +2,7 @@ import Ticket from "../models/ticketModel.js";
 import mongoose from "mongoose";
 import agentSuggestion from "../models/agentSuggestion.js";
 import ticketReplies from "../models/ticketReplies.js";
-
+import { enqueueTriage } from "../queues/triageQueue.js";
 
 // POST /api/tickets (user)
 export const createTicket = async (req, res) => {
@@ -23,6 +23,8 @@ export const createTicket = async (req, res) => {
       createdBy: req.user._id,
     });
     await ticket.save();
+
+    enqueueTriage(ticket._id);
     res.status(201).json({ status: "success", data: ticket });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });

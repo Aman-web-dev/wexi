@@ -1,42 +1,102 @@
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save } from "lucide-react";
+import { useAuth } from "../context/authContext";
 
 const Settings = () => {
   const [config, setConfig] = useState({
     autoCloseEnabled: true,
     confidenceThreshold: 0.78,
-    slaHours: 24
+    slaHours: 24,
   });
 
-  const handleSave = () => {
-    // Save config logic
-    console.log('Saving config:', config);
+  const { user } = useAuth();
+
+  const [loading, setLoading] = useState(true);
+
+  const handleSave = async() => {
+    await fetch("http://localhost:9000/api/v1/config", {
+      method: "POST", 
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(config),
+    }).then(async (response) => {
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log(data);
+      getConfig()
+    }
+    ).catch((error) => {
+      console.error("Error saving config", error);
+    });
   };
+
+  const getConfig = async () => {
+    setLoading(true);
+    try {
+      await fetch("http://localhost:9000/api/v1/config", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+      }).then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setConfig(data.data);
+        console.log(data);
+      });
+    } catch (error) {
+      console.error("Error fetching config");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      getConfig();
+    }
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-2">Configure AI agent behavior and system preferences</p>
+        <p className="text-gray-600 mt-2">
+          Configure AI agent behavior and system preferences
+        </p>
       </div>
 
       <div className="space-y-6">
         {/* AI Configuration */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">AI Agent Configuration</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            AI Agent Configuration
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Auto-close tickets</h3>
-                <p className="text-sm text-gray-600">Automatically resolve high-confidence tickets</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Auto-close tickets
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Automatically resolve high-confidence tickets
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={config.autoCloseEnabled}
-                  onChange={(e) => setConfig({ ...config, autoCloseEnabled: e.target.checked })}
+                  onChange={(e) =>
+                    setConfig({ ...config, autoCloseEnabled: e.target.checked })
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -53,7 +113,12 @@ const Settings = () => {
                 max="1"
                 step="0.01"
                 value={config.confidenceThreshold}
-                onChange={(e) => setConfig({ ...config, confidenceThreshold: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    confidenceThreshold: parseFloat(e.target.value),
+                  })
+                }
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -61,7 +126,8 @@ const Settings = () => {
                 <span>High (1.0)</span>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                Tickets with confidence above this threshold will be auto-resolved if auto-close is enabled
+                Tickets with confidence above this threshold will be
+                auto-resolved if auto-close is enabled
               </p>
             </div>
 
@@ -72,7 +138,9 @@ const Settings = () => {
               <input
                 type="number"
                 value={config.slaHours}
-                onChange={(e) => setConfig({ ...config, slaHours: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setConfig({ ...config, slaHours: parseInt(e.target.value) })
+                }
                 className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               />
               <p className="text-sm text-gray-600 mt-2">
@@ -84,26 +152,44 @@ const Settings = () => {
 
         {/* Notification Settings */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Notifications
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Email notifications</h3>
-                <p className="text-sm text-gray-600">Receive email updates for ticket status changes</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Email notifications
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Receive email updates for ticket status changes
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  defaultChecked
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">In-app notifications</h3>
-                <p className="text-sm text-gray-600">Show notifications within the application</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  In-app notifications
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Show notifications within the application
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  defaultChecked
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
             </div>
@@ -112,7 +198,9 @@ const Settings = () => {
 
         {/* System Information */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">System Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            System Information
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 className="text-sm font-medium text-gray-700">Version</h3>
@@ -127,8 +215,12 @@ const Settings = () => {
               <p className="text-sm text-gray-900 mt-1">GPT-4 (Stub Mode)</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-700">Last Updated</h3>
-              <p className="text-sm text-gray-900 mt-1">{new Date().toLocaleDateString()}</p>
+              <h3 className="text-sm font-medium text-gray-700">
+                Last Updated
+              </h3>
+              <p className="text-sm text-gray-900 mt-1">
+                {new Date().toLocaleDateString()}
+              </p>
             </div>
           </div>
         </div>
@@ -146,6 +238,5 @@ const Settings = () => {
     </div>
   );
 };
-
 
 export default Settings;

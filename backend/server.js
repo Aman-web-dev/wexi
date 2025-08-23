@@ -22,7 +22,7 @@ app.use("/api/v1/config", configRoutes);
 
 async function server() {
   console.log(port, url);
-  app.listen(port);
+  app.listen(port, "0.0.0.0");
   await mongoose
     .connect(url)
     .then(() => {
