@@ -1,4 +1,4 @@
-import ConfigModal from "../models/ConfigModal.js";
+import ConfigModal from "../models/configModel.js";
 
 export const getConfig = async (req, res) => {
   try {

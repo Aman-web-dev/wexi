@@ -1,8 +1,7 @@
 import { Queue } from "bullmq";
 
+import {connection} from '../redisConnection.js';
 
-
-const connection = { host: process.env.REDIS_HOST || "localhost" } ;
 export const triageQueue = new Queue("triage", { connection });
 
 export async function enqueueTriage(ticketId) {

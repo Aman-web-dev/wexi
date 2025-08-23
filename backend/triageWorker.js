@@ -1,7 +1,26 @@
 import { Worker } from "bullmq";
 import { runTriage } from "./triage/index.js";
+import { connection } from "./redisConnection.js";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+dotenv.config();
 
-const connection = { host: "localhost", port: 6379 };
+const url = process.env.MONGO_DB_URI;
+
+
+const connectToDb = async () => {
+  await mongoose
+    .connect(url)
+    .then(() => {
+      console.log("Connetced to DB");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+connectToDb() 
+
 
 const triageWorker = new Worker(
   "triage",

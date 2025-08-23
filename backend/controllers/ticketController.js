@@ -4,7 +4,8 @@ import agentSuggestion from "../models/agentSuggestion.js";
 import ticketReplies from "../models/ticketReplies.js";
 import { enqueueTriage } from "../queues/triageQueue.js";
 
-// POST /api/tickets (user)
+
+
 export const createTicket = async (req, res) => {
   try {
     const { title, description, category } = req.body;
@@ -24,14 +25,13 @@ export const createTicket = async (req, res) => {
     });
     await ticket.save();
 
-    enqueueTriage(ticket._id);
+    await enqueueTriage(ticket._id);
     res.status(201).json({ status: "success", data: ticket });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
   }
 };
 
-// GET /api/tickets (filter by status/my tickets)
 export const getTickets = async (req, res) => {
   try {
     const { status, mine, agent } = req.query;
@@ -75,7 +75,6 @@ export const updateTicket = async (req, res) => {
 };
 
 
-// GET /api/tickets/:id
 export const getTicketById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +98,6 @@ export const getTicketById = async (req, res) => {
   }
 };
 
-// POST /api/tickets/:id/reply (agent) → change status
 export const replyToTicket = async (req, res) => {
   try {
     const { id } = req.params;
@@ -125,7 +123,7 @@ export const replyToTicket = async (req, res) => {
     newReply.save();
     ticket.replies.push(newReply._id);
 
-    // Optionally, store replies in a separate collection or array. Here, just update status.
+  
     ticket.updatedAt = Date.now();
     await ticket.save();
     res
@@ -140,7 +138,8 @@ export const replyToTicket = async (req, res) => {
   }
 };
 
-// POST /api/tickets/:id/assign (admin/agent)
+
+
 export const assignTicket = async (req, res) => {
   try {
     const { id } = req.params;

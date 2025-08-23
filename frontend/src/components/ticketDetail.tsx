@@ -197,7 +197,7 @@ const TicketDetail = ({
   const canReply = user.role === "agent" || user.role === "admin";
   const canAssign =
     (user.role === "admin" || user.role === "agent") &&
-    ticket.status === "open" &&
+    ticket.status === "open"||ticket.status === "waiting_human" &&
     !ticket.assignee;
 
   return (

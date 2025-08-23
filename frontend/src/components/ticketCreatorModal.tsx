@@ -8,7 +8,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: 'general'
+    category: 'other'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
